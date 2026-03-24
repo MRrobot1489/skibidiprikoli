@@ -1,0 +1,2 @@
+websockets>=14.0
+mss>=9.0.0
