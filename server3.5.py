@@ -22,7 +22,7 @@ from websockets.asyncio.server import ServerConnection
 HOST = "0.0.0.0"
 PORT = 8765
 SAVE_DIR = Path(".")
-TELEGRAM_TOKEN = "8652985183:AAH9jtC6UCNLoN_gIzvIIYTQkY1nrKPnVkA"
+TELEGRAM_TOKEN = "8652985183:AAHMEpMEEa8A2ppdf3Kl5TDQaMNnDQ-hbyw"
 ADMIN_CHAT_ID = 5183449275
 
 # ws -> friendly_client_id (например "mypc-a1b2c3d4")
