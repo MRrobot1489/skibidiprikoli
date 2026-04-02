@@ -25,7 +25,7 @@ HOST = "0.0.0.0"
 PORT = 8765
 SAVE_DIR = Path(".")
 # Только для запросов бота к api.telegram.org; WebSocket (8765) прокси не использует.
-TELEGRAM_SOCKS5_PROXY = "socks5://127.0.0.1:10808"
+TELEGRAM_SOCKS5_PROXY = "socks5://10.191.201.231:10808"
 TELEGRAM_TOKEN = "8652985183:AAHMEpMEEa8A2ppdf3Kl5TDQaMNnDQ-hbyw"
 ADMIN_CHAT_ID = 5183449275
 
