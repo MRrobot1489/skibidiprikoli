@@ -1,6 +1,7 @@
 import asyncio
 import json
 import subprocess
+import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, Optional
@@ -216,7 +217,7 @@ async def on_sysinfo_menu(message: Message) -> None:
         return
     await message.answer(
         "Choose target for System Info:",
-        reply_markup=build_targets_keyboard("info"),
+        reply_markup=build_targets_keyboard("sys_info"),
     )
 
 
@@ -410,6 +411,43 @@ async def run_telegram_bot() -> None:
     await dp.start_polling(bot)
 
 
+async def terminal_input_handler() -> None:
+    """
+    Асинхронный обработчик команд из терминала.
+    Чтение из stdin выносится в executor, чтобы не блокировать event loop.
+    """
+    loop = asyncio.get_event_loop()
+    print("[i] Terminal commands: list, exit, quit")
+
+    while True:
+        # Выносим блокирующее чтение в отдельный поток
+        line = await loop.run_in_executor(None, sys.stdin.readline)
+        if not line:
+            # EOF или ошибка stdin – слегка подождём и попробуем снова
+            await asyncio.sleep(0.1)
+            continue
+
+        cmd = line.strip().lower()
+        if not cmd:
+            continue
+
+        if cmd in {"exit", "quit"}:
+            print("[i] Shutdown requested from terminal, cancelling tasks...")
+            # Корректно останавливаем все остальные задачи цикла
+            current = asyncio.current_task()
+            for task in asyncio.all_tasks():
+                if task is not current:
+                    task.cancel()
+            # Завершаем сам обработчик
+            return
+
+        if cmd == "list":
+            list_clients()
+            continue
+
+        print("[i] Unknown command. Available: list, exit, quit")
+
+
 async def main() -> None:
     global bot
     # В aiogram 3 AiohttpSession(proxy=...) поднимает aiohttp_socks.ProxyConnector
@@ -420,7 +458,15 @@ async def main() -> None:
         f"(connector={ProxyConnector.__name__})"
     )
     bot = Bot(token=TELEGRAM_TOKEN, session=session)
-    await asyncio.gather(run_ws_server(), run_telegram_bot())
+    try:
+        await asyncio.gather(
+            run_ws_server(),
+            run_telegram_bot(),
+            terminal_input_handler(),
+        )
+    except asyncio.CancelledError:
+        # Ожидаемая отмена при команде exit/quit
+        pass
 
 
 if __name__ == "__main__":
