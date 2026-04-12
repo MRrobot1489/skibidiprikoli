@@ -1,0 +1,25 @@
+mkdir -p ~/.config/systemd/user/ 
+
+[Unit]
+Description=Ratnik Client Service
+After=network.target
+
+[Service]
+Type=simple
+# Укажите полный путь к вашему скрипту
+ExecStart=/usr/bin/python3 /полный/путь/к/client_term8.py
+Restart=always
+RestartSec=5
+# Переменные окружения для доступа к GUI
+Environment=DISPLAY=:0
+Environment=XAUTHORITY=%h/.Xauthority
+
+[Install]
+WantedBy=default.target
+
+
+
+
+systemctl --user daemon-reload
+systemctl --user enable ratnik.service
+systemctl --user start ratnik.service
