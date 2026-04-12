@@ -7,7 +7,7 @@ After=network.target
 [Service]
 Type=simple
 # Укажите полный путь к вашему скрипту
-ExecStart=/usr/bin/python3 /полный/путь/к/client_term8.py
+ExecStart=/usr/bin/python3.12 /home/robot/Загрузки/client-main/client-main/client_term8.py
 Restart=always
 RestartSec=5
 # Переменные окружения для доступа к GUI
